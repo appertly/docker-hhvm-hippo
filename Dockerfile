@@ -1,14 +1,14 @@
-FROM appertly/hhvm:3.8.1
+FROM appertly/hhvm:3.10.1
 MAINTAINER Jonathan Hawk <jonathan@appertly.com>
 
-ENV HHVM_DEV_VERSION 3.8.1~jessie
+ENV HHVM_DEV_VERSION 3.10.1~jessie
 
 # Install and build hippo extension
 RUN mkdir /tmp/builds \
     && buildDeps="git-core libtool make hhvm-dev=$HHVM_DEV_VERSION" \
     && set -x \
     && apt-get update && apt-get install -y --no-install-recommends $buildDeps \
-    && git clone https://github.com/10gen-labs/mongo-hhvm-driver-prototype.git /tmp/builds/hippo \
+    && git clone https://github.com/mongodb/mongo-hhvm-driver.git /tmp/builds/hippo \
     && cd /tmp/builds/hippo \
     && git submodule update --init \
     && cd libbson \
