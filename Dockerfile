@@ -1,13 +1,14 @@
-FROM appertly/hhvm:3.12.1
+FROM appertly/hhvm:3.13.1
 MAINTAINER Jonathan Hawk <jonathan@appertly.com>
 
-ENV HHVM_DEV_VERSION 3.12.1~trusty
+ENV HHVM_DEV_VERSION 3.13.1~trusty
 
 # Install and build hippo extension
 RUN mkdir /tmp/builds \
-    && buildDeps="git-core libtool make hhvm-dev=$HHVM_DEV_VERSION" \
+    && buildDeps="git-core libtool make wget hhvm-dev=$HHVM_DEV_VERSION" \
     && set -x \
     && apt-get update && apt-get install -y --no-install-recommends $buildDeps \
+    && wget https://raw.githubusercontent.com/derickr/hhvm/09f4546c3859c4bccf746ca8ec6c3b80e7d2fbf7/CMake/HPHPIZEFunctions.cmake -O /usr/lib/x86_64-linux-gnu/hhvm/CMake/HPHPIZEFunctions.cmake \
     && git clone https://github.com/mongodb/mongo-hhvm-driver.git /tmp/builds/hippo \
     && cd /tmp/builds/hippo \
     && git submodule update --init \
@@ -19,6 +20,7 @@ RUN mkdir /tmp/builds \
     && cd .. \
     && hphpize \
     && cmake . \
+    && make configlib \
     && make \
     && mkdir -p /usr/lib/hhvm/extensions \
     && cp /tmp/builds/hippo/mongodb.so /usr/lib/hhvm/extensions/mongodb.so \
