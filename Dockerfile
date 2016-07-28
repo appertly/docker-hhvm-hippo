@@ -8,12 +8,11 @@ RUN mkdir /tmp/builds \
     && apt-get update && apt-get install -y --no-install-recommends $buildDeps \
     && git clone https://github.com/mongodb/mongo-hhvm-driver.git /tmp/builds/hippo \
     && cd /tmp/builds/hippo \
-    && git submodule update --init \
-    && ln -s /tmp/builds/hippo/libbson/autogen.sh /tmp/builds/hippo/libmongoc/src/libbson/autogen.sh \
+    && git submodule update --init --recursive \
     && hphpize \
     && cmake . \
     && make configlib \
-    && make \
+    && make -j $(nproc --all) \
     && make install \
     && cd / && rm -rf /tmp/builds \
     && apt-get purge -y --auto-remove $buildDeps libgd2-xpm-dev \
