@@ -2,13 +2,14 @@ FROM appertly/hhvm:latest
 MAINTAINER Jonathan Hawk <jonathan@appertly.com>
 
 # Install and build hippo extension
-RUN mkdir /tmp/builds \
+RUN mkdir -p /tmp/builds/hippo \
     && buildDeps="git-core libtool make wget hhvm-dev=$HHVM_VERSION libdouble-conversion-dev liblz4-dev" \
     && set -x \
     && apt-get update && apt-get install -y --no-install-recommends $buildDeps \
-    && git clone https://github.com/mongodb/mongo-hhvm-driver.git /tmp/builds/hippo \
     && cd /tmp/builds/hippo \
-    && git submodule update --init --recursive \
+    && wget -O /tmp/builds/hippo/mongo.tgz https://github.com/mongodb/mongo-hhvm-driver/releases/download/1.2.0/hhvm-mongodb-1.2.0.tgz \
+    && tar -xzf mongo.tgz \
+    && cd hhvm-mongodb-1.2.0 \
     && hphpize \
     && cmake . \
     && make configlib \
